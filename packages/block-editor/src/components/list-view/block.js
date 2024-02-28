@@ -79,6 +79,7 @@ function ListViewBlock( {
 	const blockInformation = useBlockDisplayInformation( clientId );
 	const blockTitle =
 		blockInformation?.name || blockInformation?.title || __( 'Untitled' );
+	const isSticky = blockInformation?.positionType === 'sticky';
 
 	const { block, blockName, blockEditingMode } = useSelect(
 		( select ) => {
@@ -247,13 +248,14 @@ function ListViewBlock( {
 		level
 	);
 
-	const blockAriaLabel = isLocked
-		? sprintf(
-				// translators: %s: The title of the block. This string indicates a link to select the locked block.
-				__( '%s (locked)' ),
-				blockTitle
-		  )
-		: blockTitle;
+	let blockAriaLabel = blockTitle;
+	if ( isLocked && isSticky ) {
+		blockAriaLabel += ` ${ __( '(locked)' ) } ${ __( '(sticky)' ) }`;
+	} else if ( isLocked ) {
+		blockAriaLabel += ` ${ __( '(locked)' ) }`;
+	} else if ( isSticky ) {
+		blockAriaLabel += ` ${ __( '(sticky)' ) }`;
+	}
 
 	const settingsAriaLabel = sprintf(
 		// translators: %s: The title of the block.
